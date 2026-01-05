@@ -1,4 +1,3 @@
-cat > src/scrapers/sec_scraper.py << 'EOF'
 """SEC Financial Statement Data Scraper"""
 import requests
 from bs4 import BeautifulSoup
@@ -8,7 +7,10 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class SECScraper:
+    """Scraper for SEC Financial Statement Data Sets"""
+    
     BASE_URL = "https://www.sec.gov/dera/data/financial-statement-data-sets"
     
     def __init__(self):
@@ -18,7 +20,7 @@ class SECScraper:
         })
     
     def scrape_dataset_links(self):
-        """Scrape all dataset links"""
+        """Scrape all dataset links from SEC page"""
         logger.info("Fetching SEC datasets...")
         response = self.session.get(self.BASE_URL)
         soup = BeautifulSoup(response.content, 'html.parser')
@@ -35,11 +37,20 @@ class SECScraper:
                     'text': link.text.strip()
                 })
         
-        return pd.DataFrame(datasets)
+        df = pd.DataFrame(datasets)
+        logger.info(f"Found {len(df)} datasets")
+        return df
+
 
 if __name__ == "__main__":
     scraper = SECScraper()
     df = scraper.scrape_dataset_links()
-    print(f"Found {len(df)} datasets")
-    print(df.head())
-EOF
+    
+    print(f"\nFound {len(df)} datasets")
+    print("\nFirst 10 datasets:")
+    print(df.head(10))
+    
+    # Save to CSV
+    output_file = "../../data/raw/sec_datasets.csv"
+    df.to_csv(output_file, index=False)
+    print(f"\nSaved to {output_file}")
