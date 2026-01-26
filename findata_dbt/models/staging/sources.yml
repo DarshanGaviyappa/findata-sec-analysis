@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw
+    database: FINDATA_DB
+    schema: RAW
+    tables:
+      - name: raw_sub
+      - name: raw_tag
+      - name: raw_pre

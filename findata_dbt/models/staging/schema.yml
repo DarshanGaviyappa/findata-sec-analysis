@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: stg_submissions
+    description: "Staging model for company submissions"
+    columns:
+      - name: adsh
+        description: "Unique submission identifier"
+        tests:
+          - unique
+          - not_null
+      - name: cik
+        description: "Company CIK number"
+        tests:
+          - not_null
+      - name: company_name
+        tests:
+          - not_null
+
+  - name: stg_tags
+    description: "Staging model for financial tags"
+    columns:
+      - name: tag
+        tests:
+          - not_null
+      - name: version
+        tests:
+          - not_null
