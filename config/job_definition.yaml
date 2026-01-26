@@ -1,0 +1,49 @@
+# SEC Data Pipeline Job Definition
+job:
+  name: "SEC Financial Statement ETL"
+  team_number: 1
+  year: 2024
+  quarter: 4
+  dataset: "2024q4"
+
+validation:
+  checks:
+    - file_exists
+    - schema_validation
+    - row_count_check
+    - data_type_validation
+
+staging:
+  local:
+    raw_data_dir: "data/raw/"
+    staging_dir: "data/staging/"
+    processed_dir: "data/processed/"
+
+snowflake:
+  account: "bhnvolq-is11078"
+  database: "FINDATA_DB"
+  warehouse: "COMPUTE_WH"
+  schemas:
+    - RAW
+    - JSON_STORE
+    - ANALYTICS
+
+processing:
+  methodology: "RDBMS"
+  batch_size: 5000
+  max_retries: 3
+
+pipelines:
+  - name: "raw_storage_pipeline"
+    enabled: true
+    target_schema: "RAW"
+    tables: ["SUB", "TAG", "NUM", "PRE"]
+  
+  - name: "json_transformation_pipeline"
+    enabled: true
+    target_schema: "JSON_STORE"
+    
+  - name: "fact_tables_pipeline"
+    enabled: true
+    target_schema: "ANALYTICS"
+    tables: ["BALANCE_SHEET", "INCOME_STATEMENT", "CASH_FLOW"]
